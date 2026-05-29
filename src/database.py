@@ -1,6 +1,11 @@
 import os
 from dotenv import load_dotenv
-from supabase import create_client
+import os
+from supabase import create_client, Client  # Tambahkan 'Client' di sini!
+
+# Load konfigurasi
+# (Pastikan variabel lainnya tetap seperti yang terakhir)
+...
 
 # Ambil langsung dari environment
 supabase_url = os.getenv("SUPABASE_URL")
