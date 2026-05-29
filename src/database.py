@@ -2,13 +2,21 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client
 
-# Load konfigurasi
-load_dotenv()
-supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
+# Ambil langsung dari environment
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+
+# Debugging: Print nilai (ini akan muncul di log Railway)
+print(f"DEBUG: URL terbaca: {supabase_url}")
+print(f"DEBUG: KEY terbaca: {'[TERISI]' if supabase_key else '[KOSONG]'}")
+
+if not supabase_url:
+    raise ValueError("ERROR: SUPABASE_URL tidak ditemukan di environment variables!")
+
+supabase = create_client(supabase_url, supabase_key)
 
 # Inisialisasi client
-supabase = create_client(supabase_url, supabase_key)
+supabase: Client = create_client(supabase_url, supabase_key)
 
 
 
@@ -28,7 +36,7 @@ def update_order_status(order_id, new_status):
         supabase.table("orders").update({"status": new_status}).eq("order_id", order_id).execute()
     except Exception as e:
         print(f"Error update status: {e}")
-            
+
 
 def save_order_to_db(order_id, item, qty, price, status):
     try:
