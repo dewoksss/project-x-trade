@@ -19,14 +19,21 @@ U7BUY_APP_SECRET = os.getenv('U7BUY_APP_SECRET')
 # --- 1. Jalur Webhook (Paten agar tidak 'faulty') ---
 @app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
-    # U7BUY biasanya melakukan GET untuk cek koneksi, POST untuk kirim data
+    # 1. Respon instan untuk GET (Verifikasi)
     if request.method == 'GET':
         return "Webhook is active", 200
     
-    data = request.json
-    print(f"✅ Webhook diterima: {data}")
-    # Respon JSON agar server U7BUY mengenali bahwa data sukses diterima
-    return jsonify({"status": "success", "message": "received"}), 200
+    # 2. Ambil data dalam bentuk apa pun agar tidak error
+    try:
+        data = request.get_json(silent=True) # Pakai silent=True agar tidak error
+        if data is None:
+            data = request.form.to_dict() # Coba ambil dari form-data jika bukan JSON
+        
+        print(f"✅ Webhook diterima: {data}")
+        return jsonify({"status": "success"}), 200
+    except Exception as e:
+        print(f"❌ Error memproses webhook: {e}")
+        return jsonify({"status": "error"}), 400
 
 def run_flask():
     app.run(host='0.0.0.0', port=5000, use_reloader=False)
