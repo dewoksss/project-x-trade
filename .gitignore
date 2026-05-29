@@ -1,0 +1,9 @@
+# Mengabaikan file konfigurasi sensitif
+.env
+
+# Mengabaikan database lokal SQLite
+*.db
+
+# Mengabaikan folder cache Python
+__pycache__/
+*.pyc
