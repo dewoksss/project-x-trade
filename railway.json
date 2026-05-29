@@ -3,7 +3,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "gunicorn src.main:app",
-    "restartPolicyType": "ON_FAILURE"
+    "startCommand": "python main.py"
   }
 }
