@@ -1,29 +1,24 @@
 import os
 from dotenv import load_dotenv
-import os
-from supabase import create_client, Client  # Tambahkan 'Client' di sini!
+from supabase import create_client, Client
 
-# Load konfigurasi
-# (Pastikan variabel lainnya tetap seperti yang terakhir)
-...
+# Load .env (hanya berpengaruh saat dijalankan lokal di laptop)
+load_dotenv()
 
-# Ambil langsung dari environment
-supabase_url = os.getenv("SUPABASE_URL")
-supabase_key = os.getenv("SUPABASE_KEY")
+# Gunakan URL yang sudah pasti (hardcoded) untuk menghindari error 'None' di Railway
+# Jika nanti URL Supabase berubah, cukup ganti di baris bawah ini
+SUPABASE_URL = "https://jbasqjpwzvybhuzvihag.supabase.co"
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-# Debugging: Print nilai (ini akan muncul di log Railway)
-print(f"DEBUG: URL terbaca: {supabase_url}")
-print(f"DEBUG: KEY terbaca: {'[TERISI]' if supabase_key else '[KOSONG]'}")
+# Debugging untuk memastikan di log Railway
+print(f"DEBUG: URL yang digunakan: {SUPABASE_URL}")
+print(f"DEBUG: KEY terbaca: {'[TERISI]' if SUPABASE_KEY else '[KOSONG]'}")
 
-if not supabase_url:
-    raise ValueError("ERROR: SUPABASE_URL tidak ditemukan di environment variables!")
-
-supabase = create_client(supabase_url, supabase_key)
+if not SUPABASE_KEY:
+    raise ValueError("ERROR: SUPABASE_KEY tidak ditemukan di environment variables!")
 
 # Inisialisasi client
-supabase: Client = create_client(supabase_url, supabase_key)
-
-
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def init_db():
     print("Inisialisasi database berhasil.")
@@ -42,7 +37,6 @@ def update_order_status(order_id, new_status):
     except Exception as e:
         print(f"Error update status: {e}")
 
-
 def save_order_to_db(order_id, item, qty, price, status):
     try:
         data = {
@@ -60,9 +54,7 @@ def save_order_to_db(order_id, item, qty, price, status):
 
 def get_total_cuan():
     try:
-        # Mengambil data dari tabel 'orders'
         response = supabase.table("orders").select("price").execute()
-        # Jika ada data, jumlahkan harganya
         if response.data:
             total = sum(item['price'] for item in response.data)
             return total
