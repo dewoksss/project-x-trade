@@ -1,18 +1,13 @@
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
-@app.route('/webhook', methods=['POST', 'GET'])
+@app.route('/webhook', methods=['POST'])
 def webhook():
-    # 1. Catat semua informasi request yang masuk
-    print("--- MULAI MENERIMA REQUEST ---")
-    print(f"Method: {request.method}")
-    print(f"Headers: {dict(request.headers)}")
-    print(f"Body: {request.get_data(as_text=True)}") # Mengambil mentah-mentah apa pun yang dikirim
-    print("--- SELESAI ---")
-
-    # 2. Kirim respon standar yang paling aman
-    return "OK", 200
-
-if __name__ == '__main__':
-    app.run(port=5000)
+    # Coba ambil JSON, jika gagal ambil form data, jika gagal ambil data mentah
+    data = request.get_json(silent=True)
+    if data is None:
+        data = request.form.to_dict() # Ambil jika formatnya form
+        if not data:
+            data = request.get_data(as_text=True) # Ambil teks mentah sebagai upaya terakhir
+    
+    print(f"DEBUG - Data yang diterima: {data}")
+    
+    # Berikan respon 200 agar U7BUY senang
+    return jsonify({"status": "received", "data": str(data)}), 200
