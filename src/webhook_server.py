@@ -1,15 +1,18 @@
 from flask import Flask, request, jsonify
-from database import save_order_to_db # Mengambil fungsi dari file database.py
 
 app = Flask(__name__)
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
-    data = request.get_json()
-    # Log data untuk keperluan observasi riset (nanti bisa dimasukkan ke laporan)
-    print(f"DEBUG: Menerima data dari U7BUY: {data}")
-    
-    # Simpan ke Supabase (sesuaikan key di bawah dengan JSON dari U7BUY)
-    save_order_to_db(data['order_id'], data['item'], data['qty'], data['price'], data['status'])
-    
-    return jsonify({"status": "success"}), 200
+    # 1. Catat semua informasi request yang masuk
+    print("--- MULAI MENERIMA REQUEST ---")
+    print(f"Method: {request.method}")
+    print(f"Headers: {dict(request.headers)}")
+    print(f"Body: {request.get_data(as_text=True)}") # Mengambil mentah-mentah apa pun yang dikirim
+    print("--- SELESAI ---")
+
+    # 2. Kirim respon standar yang paling aman
+    return "OK", 200
+
+if __name__ == '__main__':
+    app.run(port=5000)
