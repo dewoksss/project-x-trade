@@ -1,13 +1,16 @@
-@app.route('/webhook', methods=['POST'])
+@app.route('/webhook', methods=['POST', 'GET'])
 def webhook():
-    # Coba ambil JSON, jika gagal ambil form data, jika gagal ambil data mentah
-    data = request.get_json(silent=True)
-    if data is None:
-        data = request.form.to_dict() # Ambil jika formatnya form
-        if not data:
-            data = request.get_data(as_text=True) # Ambil teks mentah sebagai upaya terakhir
-    
-    print(f"DEBUG - Data yang diterima: {data}")
-    
-    # Berikan respon 200 agar U7BUY senang
-    return jsonify({"status": "received", "data": str(data)}), 200
+    # Menangkap semua kemungkinan sumber data
+    data_json = request.get_json(silent=True)
+    data_form = request.form.to_dict()
+    data_args = request.args.to_dict() # Ini menangkap data di URL (query params)
+    data_raw = request.get_data(as_text=True)
+
+    print("--- DETEKTIF WEHOOK AKTIF ---")
+    print(f"JSON Body: {data_json}")
+    print(f"Form Data: {data_form}")
+    print(f"Query Args (URL): {data_args}")
+    print(f"Raw Data: {data_raw}")
+    print("--- SELESAI ---")
+
+    return "OK", 200
